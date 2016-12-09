@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>hello world</title>
+<script type="text/javascript" src="js/BigDecimal-all-last.min.js"></script>
+<script type="text/javascript" src="js/aes.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var body = document.getElementsByTagName("body");
+	var start = new Date().getTime();
+	var digits = 100;
+	var PI = computePi(digits);
+	var str = 'calculated PI with decimal '+digits+' : '+PI+"<br><br>calculate PI cost: " + (new Date().getTime() - start) + "ms";
+	var second = new Date().getTime();
+	var primeLimit = 20000;
+	var primeCount = prime(primeLimit);
+	var trd = new Date().getTime();
+	add(10000);
+	var fth = new Date().getTime();
+	divide(1000, 30);
+	var fith = new Date().getTime();
+	str += '<br>count prime number in '+ primeLimit + ' cost: ' + (trd - second) + "ms";
+	str += '<br>add time: ' + (fth - trd) + "ms";
+	str += '<br>divide time: ' + (fith - fth) + "ms";
+	str += '<br>total time: ' + (new Date().getTime() - start) + "ms";
+	body[0].innerHTML = str;
+	function divide(limit, scale){
+		var a = new BigDecimal("12345");
+		for(var i = 0 ; i < limit ; i++){
+			a.divide(new BigDecimal("5.4321"), scale, BigDecimal.prototype.ROUND_HALF_EVEN);
+		}
+	}
+	function add(limit){
+		var a = new BigDecimal("1.23456789");
+		for(var i = 0 ; i < limit ; i++){
+			a.add(new BigDecimal("1.35792468"));
+		}
+	}
+	function computePi(digits) {
+		var FOUR = new BigDecimal("4");
+	    var scale = digits + 5;
+	    var arctan1_5 = arctan(5, scale);
+	    var arctan1_239 = arctan(239, scale);
+	    var pi = arctan1_5.multiply(FOUR).subtract(arctan1_239).multiply(FOUR);
+	    pi = pi.setScale(digits, BigDecimal.prototype.ROUND_HALF_UP);
+	    return pi;
+	}
+	function arctan(inverseX, scale)
+	{
+	    var result, numer, term;
+	    var invX = new BigDecimal(inverseX+'');
+	    var invX2 = new BigDecimal(inverseX * inverseX+'');
+
+	    numer = BigDecimal.prototype.ONE.divide(invX,
+	            scale, BigDecimal.prototype.ROUND_HALF_EVEN);
+
+	    result = numer;
+	    var i = 1;
+	    do {
+	        numer =
+	            numer.divide(invX2, scale, BigDecimal.prototype.ROUND_HALF_EVEN);
+	        var denom = 2 * i + 1;
+	        term =
+	            numer.divide(new BigDecimal(denom+''), scale, BigDecimal.prototype.ROUND_HALF_EVEN);
+	        if ((i % 2) != 0) {
+	            result = result.subtract(term);
+	        } else {
+	            result = result.add(term);
+	        }
+	        i++;
+	    } while (term.compareTo(BigDecimal.prototype.ZERO) != 0);
+	    return result;
+	}	
+	function prime(limit){
+		var i, n, k = 0;
+		for (n = 3; n <= limit; n++) {
+			i = 2;
+			var isPrime = true;
+			while (i < n/2+1) {
+				if (n % i == 0){
+					isPrime = false;
+					break; 
+				}
+				i++;
+			}
+
+			if (isPrime) {
+				k++;
+			}
+		}
+		return k;
+	}
+}
+</script>
+</head>
+<body>
+	this is a test html.
+</body>
+</html>
